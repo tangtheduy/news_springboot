@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head >
+	
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Thêm bài viết</title>
+
+	
+    <!-- Custom fonts for this template-->	
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    
+    <!-- Jquery-->
+    <script  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script  src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <!-- Ckeditor-->
+	
+    <script src="https://cdn.ckeditor.com/4.16.2/full/ckeditor.js"></script>
+    
+    
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+       <div th:replace="admin/fragments/sidebar"/>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+             	<div th:replace="admin/fragments/topBar"/>
+                <!-- Topbar Navbar -->
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+             	<div class="container-fluid">
+             		 <h1 class="h3 mb-2 text-gray-800">Bài viết mới</h1>
+             		
+     <form th:action="@{/add}" method="post" th:object="${news}" class="form-horizontal" enctype="multipart/form-data" id="addForm">
+    <div class="form-group">
+        <label for="id_category" class="col-md-2 control-label">Danh mục bài viết</label>
+        <div class="col-md-10">
+            <select id="id_category" name="id_category" class="form-control" th:field="*{id_category}">
+                <option th:each="category : ${category_list}" th:value="${category.id}" th:text="${category.name}"></option>
+            </select>
+            <!-- Thêm thông báo validation nếu cần -->
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="title" class="col-md-2 control-label">Tiêu đề:</label>
+        <div class="col-md-10">
+            <input type="text" id="title" name="title" class="form-control" th:field="*{title}">
+        <!--/*    <div class="alert alert-warning" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div> */--> 
+        	
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="title_short" class="col-md-2 control-label">Tiêu đề ngắn gọn:</label>
+        <div class="col-md-10">
+            <input type="text" id="title_short" name="title_short" class="form-control" th:field="*{title_short}">
+           <!--/* <div class="alert alert-warning" th:if="${#fields.hasErrors('title_short')}" th:errors="*{title_short}"></div> */--> 
+           
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="description" class="col-md-2 control-label">Mô tả bài báo</label>
+        <div class="col-md-10">
+            <textarea id="description" name="description" class="form-control" th:field="*{description}"></textarea>
+           <!--/* <div class="alert alert-warning" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>*/--> 
+      
+        </div>
+    </div>
+
+    <div class="form-group">
+    <label for="image" class="col-md-2 control-label">Ảnh bài báo</label>
+    <div class="col-md-10">
+        <input type="file" id="imageFile" name="imageFile" accept="image/*" onchange="loadFile(event)">
+        <img id="previewImage" src="" alt="Preview Image" style="max-width: 100%; max-height: 200px;">
+    </div>
+</div>
+<script>
+var loadFile = function(event) {
+    var output = document.getElementById('previewImage');
+    output.src = URL.createObjectURL(event.target.files[0]);
+    output.onload = function() {
+      URL.revokeObjectURL(output.src) // free memory
+    }
+  };
+</script>
+<br/><br>
+    <div  class="form-group">
+            <label for="cont" class="col-md-2 control-label">Nội dung</label>
+             <div class="col-md-10">
+            <textarea id="editor1" name="editor1" rows="10" class="ckeditor" th:field="*{content}" ></textarea>
+        <!--/*    <div class="alert alert-warning" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div> */--> 
+			<span class="help-block"></span>
+            </div>
+    </div>
+    <br/><br>
+    
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Thêm Bài Báo" class="btn btn-primary">
+        </div>
+    </div>
+</form>
+<script th:inline="javascript">
+    CKEDITOR.replace('editor1');
+    
+    $("#addForm").validate({
+        errorClass: "alert alert-warning",
+        ignore: [],
+        rules: {
+            title: {
+                required: true,
+                maxlength: 200
+            },
+            title_short: {
+                required: true,
+                maxlength: 200
+            },
+            description: {
+                required: true,
+                maxlength: 600
+            },
+            editor1: {
+            	ckeditor_required: true
+            }
+        },
+        messages: {
+            title: {
+                required: "Tiêu đề không được trống",
+                maxlength: "Tối đa 200 ký tự"
+            },
+            title_short: {
+                required: "Tiêu đề ngắn không được trống",
+                maxlength: "Tối đa 200 ký tự"
+            },
+            description: {
+                required: "Mô tả không được trống",
+                maxlength: "Tối đa 600 ký tự"
+            },
+            
+        }
+    });
+	
+    jQuery.validator.addMethod("ckeditor_required", function (value, element) {
+    	var editorId = $(element).attr('id');
+  	  var messageLength = CKEDITOR.instances['editor1'].getData().replace(/<[^>]*>/gi, '').length;
+       return messageLength.length === 0;
+  }, "This field is required");
+    
+    $("form").submit( function(e) {
+        var messageLength = CKEDITOR.instances['editor1'].getData().replace(/<[^>]*>/gi, '').length;
+        if( !messageLength ) {
+            alert( 'Nội dung bài báo không được trống' );
+            e.preventDefault();
+        }
+    });
+	   
+</script>
+             		
+	
+             	</div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="/vendor/chart.js/Chart.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="/js/demo/chart-area-demo.js"></script>
+    <script src="/js/demo/chart-pie-demo.js"></script>
+	
+	
+</body>
+
+</html>
